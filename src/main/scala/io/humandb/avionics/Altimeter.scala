@@ -7,6 +7,8 @@ import akka.actor.{Props, Actor, ActorSystem, ActorLogging}
 import scala.concurrent.duration._
 
 object Altimeter {
+  def apply() = new Altimeter with ProductionEventSource
+
   // Sent to the Altimeter to inform it about rate-of-climb changes
   case class RateChange(amount: Float)
 
@@ -17,8 +19,9 @@ object Altimeter {
   case class AltitudeUpdate(altitude: Double)
 }
 
-class Altimeter extends Actor with ActorLogging
-                              with EventSource {
+class Altimeter extends Actor with ActorLogging {
+  this: EventSource =>
+
   import Altimeter._
 
   // We need an "ExecutionContext" for the scheduler. This Actor's dispatcher can serve that purpose. The
